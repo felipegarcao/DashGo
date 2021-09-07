@@ -11,15 +11,22 @@ import {
   Checkbox,
   Tbody,
   Td,
-  Text
-
+  Text,
+  useBreakpointValue,
 } from '@chakra-ui/react'
-import { RiAddLine, RiPencilLine } from 'react-icons/ri'
+import { RiAddLine } from 'react-icons/ri'
 import { Header } from '../../components/Header'
 import { Pagination } from '../../components/Pagination'
-import { Sidebar } from '../../components/SideBar'
+import { Sidebar } from '../../components/SideBar';
+import Link from 'next/link'
 
 export default function UserList() {
+
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  })
+
   return (
     <Box>
       <Header />
@@ -35,25 +42,26 @@ export default function UserList() {
           >
             <Heading size="lg" fontSize="normal">Usuários</Heading>
 
-            <Button as="a" size="sm" fontSize="small" colorScheme="pink" leftIcon={<Icon as={RiAddLine} fontSize="20" />}>
-              Criar Novo
-            </Button>
+            <Link href="/users/create" passHref>
+              <Button as="a" size="sm" fontSize="small" colorScheme="pink" leftIcon={<Icon as={RiAddLine} fontSize="20" />}>
+                Criar Novo
+              </Button>
+            </Link>
           </Flex>
 
           <Table colorScheme="whiteAlpha">
             <Thead>
               <Tr>
-                <Th px="6" color="gray.300" w="8">
+                <Th px={["4", "4", "6"]} color="gray.300" w={["6", "8"]}>
                   <Checkbox colorScheme="pink" />
                 </Th>
                 <Th>Usuários</Th>
-                <Th>Data de Cadastro</Th>
-                <Th w="8"></Th>
+                {isWideVersion && <Th>Data de Cadastro</Th>}
               </Tr>
             </Thead>
             <Tbody>
               <Tr>
-                <Td px="6">
+                <Td px={["4", "4", "6"]}>
                   <Checkbox colorScheme="pink" />
                 </Td>
                 <Td>
@@ -62,14 +70,43 @@ export default function UserList() {
                     <Text fontSize="sm" color="gray.300">felipe-mara2003@hotmail.com</Text>
                   </Box>
                 </Td>
-                <Td>
-                  16 de maio, 2021
+                {isWideVersion && (
+                  <Td>
+                    16 de maio, 2021
+                  </Td>
+                )}
+              </Tr>
+              <Tr>
+                <Td px={["4", "4", "6"]}>
+                  <Checkbox colorScheme="pink" />
                 </Td>
                 <Td>
-                  <Button as="a" size="sm" fontSize="small" colorScheme="purple" leftIcon={<Icon as={RiPencilLine} fontSize="16" />}>
-                    Editar
-                  </Button>
+                  <Box>
+                    <Text fontWeight="bold">Luis Felipe</Text>
+                    <Text fontSize="sm" color="gray.300">felipe-mara2003@hotmail.com</Text>
+                  </Box>
                 </Td>
+                {isWideVersion && (
+                  <Td>
+                    16 de maio, 2021
+                  </Td>
+                )}
+              </Tr>
+              <Tr>
+                <Td px={["4", "4", "6"]}>
+                  <Checkbox colorScheme="pink" />
+                </Td>
+                <Td>
+                  <Box>
+                    <Text fontWeight="bold">Luis Felipe</Text>
+                    <Text fontSize="sm" color="gray.300">felipe-mara2003@hotmail.com</Text>
+                  </Box>
+                </Td>
+                {isWideVersion && (
+                  <Td>
+                    16 de maio, 2021
+                  </Td>
+                )}
               </Tr>
             </Tbody>
           </Table>
