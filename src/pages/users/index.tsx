@@ -15,45 +15,17 @@ import {
   useBreakpointValue,
   Spinner,
 } from '@chakra-ui/react'
-import { RiAddLine } from 'react-icons/ri'
+import { RiAddLine, RiRefreshLine } from 'react-icons/ri'
 import { Header } from '../../components/Header'
 import { Pagination } from '../../components/Pagination'
 import { Sidebar } from '../../components/SideBar';
 import Link from 'next/link'
+import { useUsers } from '../../services/hooks/useUsers';
 
-import { useQuery } from 'react-query';
-
-interface UserProps {
-  id: number;
-  name: string;
-  email: string;
-  createdAt: string;
-}
 
 export default function UserList() {
 
-  const { data, isLoading, error } = useQuery('users', async () => {
-    const response = await fetch('http://localhost:3000/api/users')
-    const data = await response.json()
-
-    const users = data.users.map((user: UserProps) => {
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric'
-        })
-      }
-    })
-
-    return users;
-  }, {
-    staleTime: 1000 * 5,
-  })
-
+  const { data, isLoading, isFetching, error, refetch } = useUsers()
 
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -73,13 +45,21 @@ export default function UserList() {
             justify="space-between"
             align="center"
           >
-            <Heading size="lg" fontSize="normal">Usuários</Heading>
+            <Heading size="lg" fontSize="normal">
+              Usuários
+              {!isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+            </Heading>
 
-            <Link href="/users/create" passHref>
-              <Button as="a" size="sm" fontSize="small" colorScheme="pink" leftIcon={<Icon as={RiAddLine} fontSize="20" />}>
-                Criar Novo
+            <Flex direction="column">
+              <Link href="/users/create" passHref>
+                <Button as="a" size="sm" fontSize="small" colorScheme="pink" leftIcon={<Icon as={RiAddLine} fontSize="20" />}>
+                  Criar Novo
+                </Button>
+              </Link>
+              <Button  mt="2" size="sm" fontSize="small" colorScheme="blue" onClick={() => refetch()} leftIcon={<Icon as={RiRefreshLine} fontSize="20" />}>
+                Atualizar
               </Button>
-            </Link>
+            </Flex>
           </Flex>
 
           {isLoading ? (
@@ -103,27 +83,31 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                 {data.map(user => (
+                  {data.map(user => (
                     <Tr key={user.id}>
-                    <Td px={["4", "4", "6"]}>
-                      <Checkbox colorScheme="pink" />
-                    </Td>
-                    <Td>
-                      <Box>
-                        <Text fontWeight="bold">{user.name}</Text>
-                        <Text fontSize="sm" color="gray.300">{user.email}</Text>
-                      </Box>
-                    </Td>
-                    {isWideVersion && (
-                      <Td>
-                        {user.createdAt}
+                      <Td px={["4", "4", "6"]}>
+                        <Checkbox colorScheme="pink" />
                       </Td>
-                    )}
-                  </Tr>
-                 ))}
+                      <Td>
+                        <Box>
+                          <Text fontWeight="bold">{user.name}</Text>
+                          <Text fontSize="sm" color="gray.300">{user.email}</Text>
+                        </Box>
+                      </Td>
+                      {isWideVersion && (
+                        <Td>
+                          {user.createdAt}
+                        </Td>
+                      )}
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
-              <Pagination />
+              <Pagination
+                totalCountOfRegisters={200}
+                currentPage={1}
+                onPageChange={() => {}}
+              />
             </>
           )}
         </Box>
