@@ -13,6 +13,13 @@ type GetUserResponse = {
   users: User[];
 }
 
+interface UserMapProps {
+  id: number;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
 export async function getUsers(page: number): Promise<GetUserResponse> {
   const { data, headers } = await api.get("/users", {
     params: {
@@ -22,7 +29,7 @@ export async function getUsers(page: number): Promise<GetUserResponse> {
 
   const totalCount = Number(headers["x-total-count"]);
 
-  const users = data.users.map((user) => {
+  const users = data.users.map((user: UserMapProps) => {
     return {
       id: user.id,
       name: user.name,
